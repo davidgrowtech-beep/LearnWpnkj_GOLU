@@ -130,25 +130,42 @@ fbq('track', 'PageView');
 <div style="height:88px;"></div>
 
 <script>
-document.getElementById("telegramBtn").addEventListener("click", function(e){
-    e.preventDefault();
-    const bridgePageLink = this.href;
 
-    // Meta Pixel Event Tracking
+// High-Converting Track & Redirect Function
+function trackAndRedirect(event) {
+  if (event) event.preventDefault();
+  const telegramLink = "https://t.me/+c3Q5310uK7BhMGI1";
+  // 1. Fire the Subscribe Event first
+  if (typeof fbq !== 'undefined') {
     fbq('track', 'Lead', {
       value: '0.00',
       currency: 'INR',
       predicted_ltv: '0.00',
-      content_name: 'Telegram Community',
-      button_click: true
     });
+  } else {
+    console.log('Pixel not loaded, but redirecting...');
+  }
+  // 2. Redirect to Telegram after 300ms delay so event fires successfully
+  setTimeout(function() {
+    window.open(telegramLink, '_blank');
+  }, 300);
+}
 
-    setTimeout(() => {
-        window.location.href = bridgePageLink;
-    }, 700);
-});
-  
+let time = 30;
+const timerTextTpl = "Will be redirecting in {n} seconds....";
+const countTxt = document.getElementById('countTxt');
+function paintTimer(){ countTxt.innerHTML = timerTextTpl.replace('{n}', '<span style="color:#ffd700;font-weight:bold;">'+time+'</span>'); }
+paintTimer();
+const countdown = setInterval(()=>{
+  time--;
+  if (time <= 0) {
+    clearInterval(countdown);
+    trackAndRedirect({ preventDefault(){}, currentTarget: { href: TELEGRAM_URL } });
+}, 700);
+
 </script>
+
+  
   
 </body>
 </html>
