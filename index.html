@@ -130,12 +130,11 @@ fbq('track', 'PageView');
 <div style="height:88px;"></div>
 
 <script>
+const TELEGRAM_URL = "https://t.me/+c3Q5310uK7BhMGI1";
 
-// High-Converting Track & Redirect Function
 function trackAndRedirect(event) {
   if (event) event.preventDefault();
-  const telegramLink = "https://t.me/+c3Q5310uK7BhMGI1";
-  // 1. Fire the Subscribe Event first
+
   if (typeof fbq !== 'undefined') {
     fbq('track', 'Lead', {
       value: '0.00',
@@ -145,23 +144,38 @@ function trackAndRedirect(event) {
   } else {
     console.log('Pixel not loaded, but redirecting...');
   }
-  // 2. Redirect to Telegram after 300ms delay so event fires successfully
-  setTimeout(function() {
-    window.open(telegramLink, '_blank');
+
+  setTimeout(function () {
+    window.location.href = TELEGRAM_URL;
   }, 300);
 }
 
-let time = 30;
+let time = 10;
 const timerTextTpl = "Will be redirecting in {n} seconds....";
 const countTxt = document.getElementById('countTxt');
-function paintTimer(){ countTxt.innerHTML = timerTextTpl.replace('{n}', '<span style="color:#ffd700;font-weight:bold;">'+time+'</span>'); }
+
+function paintTimer() {
+  if (!countTxt) return;
+  countTxt.innerHTML = timerTextTpl.replace(
+    '{n}',
+    '<span style="color:#ffd700;font-weight:bold;">' + time + '</span>'
+  );
+}
 paintTimer();
-const countdown = setInterval(()=>{
+
+const countdown = setInterval(function () {
   time--;
+  paintTimer();
   if (time <= 0) {
     clearInterval(countdown);
-    trackAndRedirect({ preventDefault(){}, currentTarget: { href: TELEGRAM_URL } });
-}, 700);
+    trackAndRedirect();
+  }
+}, 1000);
+
+document.getElementById('telegramBtn')?.addEventListener('click', trackAndRedirect);
+document.getElementById('stickyTelegramBtn')?.addEventListener('click', trackAndRedirect);
 </script>
+
+  
 </body>
 </html>
