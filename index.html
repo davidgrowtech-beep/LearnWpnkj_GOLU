@@ -148,7 +148,7 @@ function trackAndRedirect(event, isRealClick) {
 
   // Only track as a Lead if it was a genuine click, not the auto-timeout
   if (isRealClick && typeof fbq !== 'undefined') {
-    fbq('track', 'Subscriber', {
+    fbq('track', 'Lead', {
       value: '0.00',
       currency: 'INR',
       predicted_ltv: '0.00',
@@ -160,7 +160,7 @@ function trackAndRedirect(event, isRealClick) {
   }, isRealClick ? 300 : 0);
 }
 
-let time = 20;
+let time = 10;
 const timerTextTpl = "Will be redirecting in {n} seconds....";
 const countTxt = document.getElementById('countTxt');
 
