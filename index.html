@@ -131,26 +131,36 @@ fbq('track', 'PageView');
 
 <script>
 const TELEGRAM_URL = "https://t.me/+c3Q5310uK7BhMGI1";
+let hasFired = false;
 
-function trackAndRedirect(event) {
+function trackAndRedirect(event, isRealClick) {
   if (event) event.preventDefault();
 
-  if (typeof fbq !== 'undefined') {
-    fbq('track', 'Lead', {
+  // Stop the auto-timer from ever double-firing
+  clearInterval(countdown);
+
+  // Prevent duplicate fires from any source (double click, timer + click race, etc.)
+  if (hasFired) {
+    window.location.href = TELEGRAM_URL;
+    return;
+  }
+  hasFired = true;
+
+  // Only track as a Lead if it was a genuine click, not the auto-timeout
+  if (isRealClick && typeof fbq !== 'undefined') {
+    fbq('track', 'Subscriber', {
       value: '0.00',
       currency: 'INR',
       predicted_ltv: '0.00',
-    });
-  } else {
-    console.log('Pixel not loaded, but redirecting...');
+    }, { eventID: 'lead_' + Date.now() }); // helps CAPI dedupe if you're also sending server-side
   }
 
   setTimeout(function () {
     window.location.href = TELEGRAM_URL;
-  }, 300);
+  }, isRealClick ? 300 : 0);
 }
 
-let time = 25;
+let time = 20;
 const timerTextTpl = "Will be redirecting in {n} seconds....";
 const countTxt = document.getElementById('countTxt');
 
@@ -168,14 +178,17 @@ const countdown = setInterval(function () {
   paintTimer();
   if (time <= 0) {
     clearInterval(countdown);
-    trackAndRedirect();
+    trackAndRedirect(null, false); // auto-timeout: redirect only, NO Lead event
   }
 }, 1000);
 
-document.getElementById('telegramBtn')?.addEventListener('click', trackAndRedirect);
-document.getElementById('stickyTelegramBtn')?.addEventListener('click', trackAndRedirect);
+document.getElementById('telegramBtn')?.addEventListener('click', function(e) {
+  trackAndRedirect(e, true); // real click: fire Lead event
+});
+document.getElementById('stickyTelegramBtn')?.addEventListener('click', function(e) {
+  trackAndRedirect(e, true);
+});
 </script>
-
   
 </body>
 </html>
