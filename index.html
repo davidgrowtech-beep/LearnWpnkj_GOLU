@@ -136,7 +136,7 @@ function trackAndRedirect(event) {
   if (event) event.preventDefault();
 
   if (typeof fbq !== 'undefined') {
-    fbq('track', 'Contact', {
+    fbq('track', 'Lead', {
       value: '0.00',
       currency: 'INR',
       predicted_ltv: '0.00',
@@ -150,7 +150,7 @@ function trackAndRedirect(event) {
   }, 300);
 }
 
-let time = 15;
+let time = 25;
 const timerTextTpl = "Will be redirecting in {n} seconds....";
 const countTxt = document.getElementById('countTxt');
 
